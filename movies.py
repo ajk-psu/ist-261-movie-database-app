@@ -1,13 +1,19 @@
 # TODO: Module and Class docstrings
 
 class Movie:
-    def __init__(self, title, genre, year, runtime, score, director):
+    def __init__(self, title, genre, age_rating, year, director, writer, actor, country, company, run_time, score, votes):
         self.title = title
         self.genre = genre
+        self.age_rating = age_rating
         self.year = year
-        self.runtime = runtime
-        self.score = score
         self.director = director
+        self.writer = writer
+        self.actor = actor
+        self.country = country
+        self.company = company
+        self.run_time = run_time
+        self.score = score
+        self.votes = votes
         
     def add_movie(self):
         pass
