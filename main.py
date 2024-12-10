@@ -49,7 +49,6 @@ if __name__ == '__main__':
         if user_selection == 1:
             
             while menu_done is False:
-                
                 console_interface.update_screen('Add or Remove a Movie', 'From this menu, you can add a new movie to the database or remove one. Please select an option to continue.')
                 user_selection = console_interface.prompt_options_menu('Add a New Movie', 'Remove an Existing Movie', 'Return to Main Menu')
                 
@@ -120,6 +119,13 @@ if __name__ == '__main__':
                     elif len(search_results) == 1:  # 1 Result
                         console_interface.update_screen(f'Removing {title_string}...', f'The movie {title_string} has been found in the database. Please note that removing a movie cannot be undone! If you want this movie back later, you will have to manually add it or import again.')
                         confirm_remove = console_interface.prompt_yes_or_no(f'Remove {title_string} from the database? [Note: This cannot be undone!]')
+                        if confirm_remove is True:
+                            del movie_list[search_results[0]]
+                            console_interface.update_screen(f'{title_string} Removed!', f'{title_string} has now been removed from the database.')
+                            console_interface.prompt_enter_to_continue()
+                        else:
+                            console_interface.update_screen(f'Canceled {title_string} Removal', f'The removal operation has been canceled. {title_string} will remain in the databaase.')
+                            console_interface.prompt_enter_to_continue()
                         
                     else: # More than 1 result
                         console_interface.update_screen(f'Multiple Matches for {title_string} Found!', f'There are {len(search_results)} movies that have the title of {title_string}.')
