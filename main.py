@@ -46,12 +46,28 @@ def get_title_string():
         title_string = console_interface.prompt_ask_for_string('You must enter a title for the movie. Please enter a title', replace_blank=False)
     return title_string
 
-def select_a_result(search_results):
+def select_a_result(search_results, movie_data):
     """
-    If a search result returns more than one result, this method prompts the user to select one result to be used for further operations (such as deleting or updating)
-    """
-    pass
+    If a search result returns more than one result when only one is needed for an operation (such as deleting or updating), this method prompts the user to select one result to be used for further operations.
 
+    Args:
+        search_results (list): List of indexes
+        movie_data (list): Corresponding list of movie data to crawl through
+
+    Returns:
+        Returns integer of the selected result to continue operations with.
+    """
+    for number, index in enumerate(search_results):
+        print(f'Result Number {number + 1}:   {movie_data.data_list[index].title} ({movie_data.data_list[index].year}): Genre: {movie_data.data_list[index].genre} - Directed by {movie_data.data_list[index].director} and starring {movie_data.data_list[index].actor}.')
+    print()
+    
+    # 1 needs to be subtracted from the user's response so that it corresponds to an index (do not allow an out of range entry).
+    selected_result = int(console_interface.prompt_ask_for_number(f'Please enter the result number you wish to delete')) - 1
+    while selected_result not in range(len(search_results)):
+        selected_result = int(console_interface.prompt_ask_for_number(f'That is not a valid choice. Please enter one of the result numbers')) - 1
+    return selected_result
+                            
+    
 # Main program loop starts here.
 if __name__ == '__main__':
     
@@ -142,14 +158,7 @@ if __name__ == '__main__':
                     else: # More than 1 result: User must select which movie they would like to delete.
                         console_interface.update_screen(f'Multiple Matches for {title_string} Found!', f'There are {len(search_results)} movies that have the title of {title_string}.')
                         
-                        for number, index in enumerate(search_results):
-                            print(f'Result Number {number + 1}:    {movie_data.data_list[index].title} ({movie_data.data_list[index].year}): {movie_data.data_list[index].genre} - Directed by {movie_data.data_list[index].director} and starring {movie_data.data_list[index].actor}.')
-                        print()
-                        
-                        # 1 needs to be subtracted from the user's response so that it corresponds to an index.
-                        user_selection = int(console_interface.prompt_ask_for_number(f'Please enter the result number you wish to delete')) - 1
-                        while user_selection not in range(len(search_results)):
-                            user_selection = int(console_interface.prompt_ask_for_number(f'That is not a valid choice. Please enter one of the result numbers')) - 1
+                        user_selection = select_a_result(search_results, movie_data)
                             
                         # Confirm removal
                         found_title = movie_data.data_list[search_results[user_selection]]
