@@ -17,7 +17,7 @@ class ConsoleUI:
         * Write more descriptive class description.
     """
     
-    UI_WIDTH = 150
+    UI_WIDTH = 200
     """int: Determines how wide (in characters) the console user interface is allowed to be."""
 
     HEADER_TEXT = 'Python Movie Database Manager'
@@ -103,7 +103,7 @@ class ConsoleUI:
         while True:
             try:
                 selected_option = int(input())
-                if selected_option < 0 or selected_option > len(available_options):
+                if selected_option < 1 or selected_option > len(available_options):
                     raise ValueError
                 else:
                     return selected_option
@@ -140,21 +140,28 @@ class ConsoleUI:
                 selected_option = input(f'{question} (Yes or No): ')
 
 
-    def prompt_ask_for_string(self, question):
+    def prompt_ask_for_string(self, question, replace_blank = True):
         """
         Prompts the user to respond to a given question and returns that response in a string.
 
         Args:
             question (str): _Description_: Question to ask the user.
+            replace_blank (bool, optional) _Description_: When set to True, if the user enters nothing for a prompt, the methods returns the string 'Unknown'
 
         Returns:
             Returns user's response to the prompt in the form of a string.
         """
+        
         user_response = input(f'{question}: ')
-        return user_response
+        
+        if replace_blank is True and len(user_response) == 0:
+            return 'Unknown'
+        else:
+            return user_response
+        
     
     
-    def prompt_ask_for_number(self, question, get_float = False):
+    def prompt_ask_for_number(self, question, get_float = False, replace_blank = True):
         """
         Prompts the user to enter a number, returns the user's selected number as either a float or an integer.
         
@@ -163,6 +170,7 @@ class ConsoleUI:
         Args:
             question (str): _Description_: Question to ask the user.
             get_float (bool, optional): _Description_: When set to True, this method will attempt to return a float type instead of an integer. Defaults to False.
+            replace_blank (bool, optional): _Description_: When set to True, if the user enters nothing the method will return 0. Defaults to True.
             
         Raises:
             ValueError: _Description_: Inappropriate argument value (of correct type).
@@ -174,19 +182,26 @@ class ConsoleUI:
         print(f'{question}:', end = ' ')
         
         while True:
-            if get_float:
-                try:
-                    user_response = float(input())
-                    return user_response
-                except:
-                    print('That is not a valid number. Please enter a number:', end = ' ')
+            user_response = input()
+            
+            if replace_blank is True and len(user_response) == 0:
+                if get_float:
+                    return 0.0
+                else:
+                    return 0
             else:
-                try:
-                    user_response = int(input())
-                    return user_response
-                except:
-                    print('That is not a valid whole number. Please enter a whole number (no decimals):', end = ' ')
-                    
+                if get_float:
+                    try:
+                        float(user_response)
+                        return user_response
+                    except:
+                        print('That is not a valid number. Please enter a number:', end = ' ')
+                else:
+                    try:
+                        int(user_response)
+                        return user_response
+                    except:
+                        print('That is not a valid whole number. Please enter a whole number (no decimals):', end = ' ')
     
     def prompt_enter_to_continue(self):
         """Halts application and prompts the user to press their Enter key to continue."""
