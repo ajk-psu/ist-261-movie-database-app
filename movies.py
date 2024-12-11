@@ -48,6 +48,9 @@ class MovieDatabase:
         """
         del(self.data_list[index])
     
+    def update_movie_attribute(self, index, attribute, new_value):
+        pass
+    
     def search_by_attribute(self, search_attribute, search_value, return_index = False):
         """
         Searches the data list for Movies objects with the given attribute that matches the given search value.
@@ -70,8 +73,20 @@ class MovieDatabase:
                     search_results.append(movie)
         return search_results
     
-    def print_single_movie_details(self, index):
-        pass
+    def print_movie_details_list(self, index):
+        print(f'Title: {self.data_list[index].title}\n'
+              f'Genre: {self.data_list[index].genre}\n'
+              f'Age Rating: {self.data_list[index].age_rating}\n'
+              f'Relase Year: {self.data_list[index].year}\n'
+              f'Director: {self.data_list[index].director}\n'
+              f'Writer: {self.data_list[index].writer}\n'
+              f'Starring Actor: {self.data_list[index].actor}\n'
+              f'Country of Origin: {self.data_list[index].country}\n'
+              f'Publishing Company: {self.data_list[index].company}\n'
+              f'Run Time (in minutes): {self.data_list[index].run_time}\n'
+              f'IMDb Score: {self.data_list[index].score}\n'
+              f'Amount of User Votes: {self.data_list[index].votes}\n'
+              )
     
     def print_entire_table(self):
         for attribute in self.attribute_list:

@@ -58,11 +58,12 @@ def select_a_result(search_results, movie_data):
         Returns integer of the selected result to continue operations with.
     """
     for number, index in enumerate(search_results):
+        # 1 is added to number to be more "user friendly" (otherwise Result Number would start at 0).
         print(f'Result Number {number + 1}:   {movie_data.data_list[index].title} ({movie_data.data_list[index].year}): Genre: {movie_data.data_list[index].genre} - Directed by {movie_data.data_list[index].director} and starring {movie_data.data_list[index].actor}.')
     print()
     
     # 1 needs to be subtracted from the user's response so that it corresponds to an index (do not allow an out of range entry).
-    selected_result = int(console_interface.prompt_ask_for_number(f'Please enter the result number you wish to delete')) - 1
+    selected_result = int(console_interface.prompt_ask_for_number(f'Please enter the result number of the movie to continue working with')) - 1
     while selected_result not in range(len(search_results)):
         selected_result = int(console_interface.prompt_ask_for_number(f'That is not a valid choice. Please enter one of the result numbers')) - 1
     return selected_result
@@ -156,7 +157,7 @@ if __name__ == '__main__':
                             console_interface.prompt_enter_to_continue()
                         
                     else: # More than 1 result: User must select which movie they would like to delete.
-                        console_interface.update_screen(f'Multiple Matches for {title_string} Found!', f'There are {len(search_results)} movies that have the title of {title_string}.')
+                        console_interface.update_screen(f'Multiple Matches for {title_string} Found!', f'There are {len(search_results)} movies that have the title of {title_string}. Please select the appropriate one to delete.')
                         
                         user_selection = select_a_result(search_results, movie_data)
                             
@@ -175,15 +176,56 @@ if __name__ == '__main__':
                             console_interface.prompt_enter_to_continue()
 
                 # Return to Main Menu Branch
-                else:
+                else: 
                     menu_done = True
                         
         # Update a Movie Branch
         elif user_selection == 2:
             while menu_done is False:
-                console_interface.update_screen('Update a Movie', 'From here, you can select a movie entry to edit and update its information.')
-                console_interface.prompt_enter_to_continue()
-                menu_done = True
+                task_done = False
+                search_results.clear() # Clear search_results to avoid polluting the next search results with results from an old search.
+                
+                console_interface.update_screen('Update a Movie', 'From here, you can select a movie entry to edit and update its information. Please select an option below.')
+                user_selection = console_interface.prompt_options_menu('Edit a Movie\'s Details', 'Return to Main Menu')
+                
+                if user_selection == 1:
+                    console_interface.update_screen('Update a Movie', 'To begin editing, please enter the title of the movie you wish to edit.')
+                    # Get title_string
+                    title_string = get_title_string()
+                
+                    #Search for movie
+                    search_results = movie_data.search_by_attribute('title', title_string, return_index=True)
+                
+                    if len(search_results) == 0:    # No results
+                        console_interface.update_screen(f'{title_string} Not Found!', f'The movie {title_string} does not appear to exist in the database. Check your spelling and try again.')
+                        console_interface.prompt_enter_to_continue()
+                        continue
+                
+                    elif len(search_results) == 1:  # Movie found
+                        active_index = search_results[0]
+                        movie_data.print_movie_details_list(active_index)
+
+                    else:   # More than 1 result: User must select which movie they would like to update.
+                        user_selection = select_a_result(search_results, movie_data)
+                        active_index = search_results[user_selection]
+
+                    while task_done is False:
+                        console_interface.update_screen(f'{movie_data.data_list[active_index].title} Information', f'Here is the information on {movie_data.data_list[active_index].title}. Please select which detail you would like to edit below.')
+                        movie_data.print_movie_details_list(active_index)
+                    
+                        user_selection = console_interface.prompt_ask_for_string('Please enter the attribute you wish to change. If you are done, type \'Done\' instead', replace_blank=False)
+
+                        while user_selection not in movie_data.attribute_list and user_selection != 'Done' and user_selection != 'done':
+                            user_selection = console_interface.prompt_ask_for_string('That is not a valid attribute. Please enter the movie detail you wish to edit as it exactly appears above. If you are done, type \'Done\' instead', replace_blank=False)
+                        
+                        if user_selection == 'Done' or user_selection == 'done':
+                            task_done = True
+                        else:
+                            new_value = console_interface.prompt_ask_for_string(f'Please enter the new value for this movie\'s {user_selection}')
+                            movie_data.update_movie_attribute(active_index, user_selection, new_value)
+                            console_interface.prompt_enter_to_continue()
+                else:
+                    menu_done = True
             
         # Search for Movies Branch
         elif user_selection == 3:
