@@ -30,7 +30,7 @@ task_done = False
 """bool: Boolean used to determine if the current task loop the program is running has finished."""
     
 user_selection = -1
-"""int: Integer used to store the user's selected option."""
+"""int, string, float: Variable used to store the user's selected option."""
 
 
 # Method Defintions
@@ -72,30 +72,28 @@ def select_a_result(search_results, movie_data):
 # Main program loop starts here.
 if __name__ == '__main__':
     
-    while close_program is False:
+    while not close_program:
         
-        menu_done = False # Set menu_done to False when entering the main menu to avoid making it impossible to enter the sub-menus.
+        menu_done = False # Set menu_done to False when entering/returning to the main menu to avoid making it impossible to enter the sub-menus.
         console_interface.update_screen('Main Menu', 'Welcome to the Python Movie Database Manager!\nFor the best viewing experience, please maximize this window. To get started, select an option below.')
         user_selection = console_interface.prompt_options_menu('Add or Remove a Movie', 'Update a Movie', 'Search and Display Movies', 'Import Data from CSV', 'Export Data to CSV', 'Exit Application', 'DEV: DEBUGGING')
     
         # Add or Remove Movie Branch
-        if user_selection == 1:
-            
-            while menu_done is False:
+        if user_selection == 1: 
+            while not menu_done:
                 console_interface.update_screen('Add or Remove a Movie', 'From this menu, you can add a new movie to the database or remove one. Please select an option to continue.')
                 user_selection = console_interface.prompt_options_menu('Add a New Movie', 'Remove an Existing Movie', 'Return to Main Menu')
                 
                 # Add a Movie Branch
                 if user_selection == 1:
                     task_done = False
-                    
                     console_interface.update_screen('Add a New Movie', 'To add a new movie to the database, please first enter the title of the movie you wish to add.')
                     
                     # Get Title attribute (do not allow blanks)
                     title_string = get_title_string()
                     
                     #Get rest of movie attributes from user
-                    while task_done is False:
+                    while not task_done:
                         console_interface.update_screen(f'Adding {title_string} to the Database', f'Please fill out the following details about {title_string}. If you are unsure of a detail, you may leave that field blank.')
                         new_movie_entry.clear()
                         new_movie_entry.append(title_string)
@@ -137,43 +135,28 @@ if __name__ == '__main__':
                     # Search for matching Title
                     search_results = movie_data.search_by_attribute('title', title_string, return_index=True)
                     
-                    if len(search_results) == 0:    # No results
+                    if len(search_results) == 0:
                         console_interface.update_screen(f'{title_string} Not Found!', f'The movie {title_string} does not appear to exist in the database. Check your spelling and try again.')
                         console_interface.prompt_enter_to_continue()
-                        
-                    elif len(search_results) == 1:  # 1 Result
-                        found_title = movie_data.data_list[search_results[0]].title
-                        # Confirm removal
-                        console_interface.update_screen(f'Removing {found_title}...', f'The movie {found_title} has been found in the database. Please note that removing a movie cannot be undone! If you want this movie back later, you will have to manually add it or import again.')
-                        confirm_remove = console_interface.prompt_yes_or_no(f'Remove {found_title} from the database? [Note: This cannot be undone!]')
-                        if confirm_remove is True:
-                            # Remove movie
-                            movie_data.remove_movie(search_results[0])
-                            console_interface.update_screen(f'{title_string} Removed!', f'{title_string} has now been removed from the database.')
-                            console_interface.prompt_enter_to_continue()
-                        else:
-                            # Cancel removal
-                            console_interface.update_screen(f'Canceled {found_title} Removal', f'The removal operation has been canceled. {found_title} will remain in the database.')
-                            console_interface.prompt_enter_to_continue()
-                        
-                    else: # More than 1 result: User must select which movie they would like to delete.
+                    elif len(search_results) == 1:
+                        index = search_results[0] 
+                    else:
                         console_interface.update_screen(f'Multiple Matches for {title_string} Found!', f'There are {len(search_results)} movies that have the title of {title_string}. Please select the appropriate one to delete.')
-                        
                         user_selection = select_a_result(search_results, movie_data)
-                            
-                        # Confirm removal
-                        found_title = movie_data.data_list[search_results[user_selection]]
-                        console_interface.update_screen(f'Removing {found_title.title} ({found_title.year})...', f'You have selected {found_title.title} ({found_title.year}) to be removed from the database. Please note that removing a movie cannot be undone! If you want this movie back later, you will have to manually add it or import again.')
-                        confirm_remove = console_interface.prompt_yes_or_no(f'Remove {found_title.title} ({found_title.year}) from the database? [Note: This cannot be undone!]')
-                        if confirm_remove is True:
-                            # Remove movie
-                            del movie_data.data_list[search_results[user_selection]]
-                            console_interface.update_screen(f'{title_string} Removed!', f'{title_string} has now been removed from the database.')
-                            console_interface.prompt_enter_to_continue()
-                        else:
-                            # Cancel removal
-                            console_interface.update_screen(f'Canceled {found_title.title} ({found_title.year}) Removal', f'The removal operation has been canceled. {found_title.title} ({found_title.year}) will remain in the database.')
-                            console_interface.prompt_enter_to_continue()
+                        index = search_results[user_selection]
+
+                    # Confirm removal
+                    title_to_remove = (f'{movie_data.data_list[index].title} ({movie_data.data_list[index].year})')
+                    console_interface.update_screen(f'Removing {title_to_remove}...', f'The movie {title_to_remove} can be removed from the database. Please note that removing a movie cannot be undone! If you want this movie back later, you will have to manually add it or import again.')
+                    confirm_remove = console_interface.prompt_yes_or_no(f'Remove {title_to_remove} from the database? [Note: This cannot be undone!]')
+                    
+                    if confirm_remove:
+                        movie_data.remove_movie(index)
+                        console_interface.update_screen(f'{title_string} Removed!', f'{title_string} has now been removed from the database.')
+                        console_interface.prompt_enter_to_continue()
+                    else:
+                        console_interface.update_screen(f'Canceled {title_to_remove} Removal', f'The removal operation has been canceled. {title_to_remove} will remain in the database.')
+                        console_interface.prompt_enter_to_continue()
 
                 # Return to Main Menu Branch
                 else: 
@@ -181,13 +164,14 @@ if __name__ == '__main__':
                         
         # Update a Movie Branch
         elif user_selection == 2:
-            while menu_done is False:
+            while not menu_done:
                 task_done = False
                 search_results.clear() # Clear search_results to avoid polluting the next search results with results from an old search.
                 
                 console_interface.update_screen('Update a Movie', 'From here, you can select a movie entry to edit and update its information. Please select an option below.')
                 user_selection = console_interface.prompt_options_menu('Edit a Movie\'s Details', 'Return to Main Menu')
                 
+                # Update a Movie
                 if user_selection == 1:
                     console_interface.update_screen('Update a Movie', 'To begin editing, please enter the title of the movie you wish to edit.')
                     
@@ -196,19 +180,19 @@ if __name__ == '__main__':
                 
                     #Search for movie
                     search_results = movie_data.search_by_attribute('title', title_string, return_index=True)
-                
-                    if len(search_results) == 0:    # No results
+
+                    if len(search_results) == 0:    
                         console_interface.update_screen(f'{title_string} Not Found!', f'The movie {title_string} does not appear to exist in the database. Check your spelling and try again.')
                         console_interface.prompt_enter_to_continue()
                         continue
-                    elif len(search_results) == 1:  # Movie found
+                    elif len(search_results) == 1:  
                         active_index = search_results[0]
                         movie_data.print_movie_details_list(active_index)
-                    else:   # More than 1 result: User must select which movie they would like to update.
+                    else:
                         user_selection = select_a_result(search_results, movie_data)
                         active_index = search_results[user_selection]
 
-                    while task_done is False:
+                    while not task_done:
                         console_interface.update_screen(f'{movie_data.data_list[active_index].title} Information', f'Here is the information on {movie_data.data_list[active_index].title}. Please select which detail you would like to edit below.')
                         movie_data.print_movie_details_list(active_index)
                     
@@ -223,17 +207,17 @@ if __name__ == '__main__':
                         else:
                             new_value = console_interface.prompt_ask_for_string(f'Please enter the new value for this movie\'s {user_selection}')
                             movie_data.update_movie_attribute(active_index, user_selection, new_value)
-                            
                             console_interface.prompt_enter_to_continue()
+                # Return to Main Menu
                 else:
                     menu_done = True
             
         # Search for Movies Branch
         elif user_selection == 3:
-            while menu_done is False:
-                movie_data.clear_search_list()
+            while not menu_done:
                 task_done = False
                 confirm_remove = False
+                search_results.clear()
                 
                 console_interface.update_screen('Search and Display Movie', 'From this menu you can choose to search for a movie by attribute and display the movies currently in the database.\n'
                                                 f'There are currently {len(movie_data.data_list)} record(s) in the database.\n\nPlease select an option below to continue.')
@@ -241,7 +225,7 @@ if __name__ == '__main__':
 
                 # Movie Search Loop
                 if user_selection == 1:
-                    while task_done is False:
+                    while not task_done:
                         console_interface.update_screen('Movie Search Menu', f'Welcome to the search menu, please select an operation below.\nCurrent search results: {len(movie_data.search_list)} records')
                         user_selection = console_interface.prompt_options_menu('Search by Attribute', 'Display Current Search Results', 'Clear Current Search Results', 'Export Search Results to CSV File', 'Return to Previous Menu')
                         
@@ -252,14 +236,14 @@ if __name__ == '__main__':
                         # Display Current Search Results
                         elif user_selection == 2:
                             console_interface.update_screen('Movie Search Results', f'Amount of search results: {len(movie_data.search_list)} records')
-                            movie_data.print_table(movie_data.search_list)
+                            movie_data.print_table(search_results)
                             console_interface.prompt_enter_to_continue()
                         # Clear Current Search Results
                         elif user_selection == 3:
                             console_interface.update_screen('Movie Search Menu - Warning!', f'You are about to clear your current search ({len(movie_data.search_list)} records)!')
                             confirm_remove = console_interface.prompt_yes_or_no('Are you sure you wish to clear your current search results?')
                             if confirm_remove is True:
-                                movie_data.clear_search_list()
+                                search_results.clear()
                                 console_interface.update_screen('Movie Search Menu - Search Results Cleared', 'Your search results have been cleared.')
                                 console_interface.prompt_enter_to_continue()
                             else:
@@ -308,7 +292,7 @@ if __name__ == '__main__':
                 
             console_interface.prompt_enter_to_continue()
             
-        # User has entered an invalid option (either it is not an integer or it is not a valid integer.)
+        # User has somehow entered an invalid option (either it is not an integer or it is not a valid integer.)
         else:
             console_interface.update_screen('Error: Invalid Option!', 'You have entered an invalid option.')
             console_interface.prompt_enter_to_continue()

@@ -49,9 +49,6 @@ class MovieDatabase:
             index (int): _Description_: The index of the Movie object to be removed from the data list.
         """
         del(self.data_list[index])
-        
-    def clear_search_list(self):
-        self.search_list.clear()
     
     def update_movie_attribute(self, index, attribute, new_value):
         """
@@ -171,8 +168,12 @@ class MovieDatabase:
               f'Amount of User Votes: {self.data_list[index].votes}\n'
               )
     
-    def print_table(self, list):
-        
+    @staticmethod
+    def convert_description_to_attribute(description):
+        pass
+    
+    @staticmethod
+    def print_table(list):
         # Header Row
         print(f'{'Title':60} {'Genre':15} {'Age Rating':15} {'Release Year':15} {'Director':25} {'Writer':25} {'Lead Actor':25} {'Country of Origin':25} {'Publishing Company':50} {'Run Time':10} {'IMDb Score':15} {'Amount of Votes':15}')
         print('-' * 310)
