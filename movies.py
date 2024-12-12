@@ -29,7 +29,7 @@ class MovieDatabase:
     def __init__(self):
         self.data_list = []
         self.search_list = []
-        self.attribute_list = ['Title', 'Genre', 'Age Rating', 'Release Year', 'Director', 'Writer', 'Starring Actor', 'Country of Origin', 'Publishing Company', 'Run Time', 'IMDb Score', 'Amount of User Votes']
+        self.attribute_list = ['Title', 'Genre', 'Age Rating', 'Release Year', 'Director', 'Writer', 'Lead Actor', 'Country of Origin', 'Publishing Company', 'Run Time', 'IMDb Score', 'Amount of Votes']
     
     def add_movie(self, movie):
         """
@@ -49,6 +49,9 @@ class MovieDatabase:
             index (int): _Description_: The index of the Movie object to be removed from the data list.
         """
         del(self.data_list[index])
+        
+    def clear_search_list(self):
+        self.search_list.clear()
     
     def update_movie_attribute(self, index, attribute, new_value):
         """
@@ -88,9 +91,9 @@ class MovieDatabase:
         elif attribute == 'Writer':
             self.data_list[index].writer = new_value
             print('Main writer updated!')     
-        elif attribute == 'Starring Actor':
+        elif attribute == 'Lead Actor':
             self.data_list[index].actor = new_value
-            print('Starring actor updated!')
+            print('Lead actor updated!')
         elif attribute == 'Country of Origin':
             self.data_list[index].country = new_value
             print('Country of origin updated!')
@@ -113,7 +116,7 @@ class MovieDatabase:
             except:
                 print('You have enter an invalid entry for this attribute. IMDb score must be a number.\n'
                       'The value for this attribute will not be changed.')
-        elif attribute == 'Amount of User Votes':
+        elif attribute == 'Amount of Votes':
             try:
                 int(new_value)
                 self.data_list[index].votes = new_value
@@ -168,13 +171,21 @@ class MovieDatabase:
               f'Amount of User Votes: {self.data_list[index].votes}\n'
               )
     
-    def print_entire_table(self):
-        for attribute in self.attribute_list:
-            print(f'{attribute}', end='\t\t')
-        print()
-        for movie in self.data_list:
-            print(f'{movie.title}\t\t{movie.genre}\t\t{movie.age_rating}\t\t{movie.year}\t\t{movie.director}\t\t{movie.writer}\t\t{movie.actor}\t\t{movie.country}\t\t{movie.company}\t\t{movie.run_time}\t\t{movie.score}\t\t{movie.votes}')
+    def print_table(self, list):
         
+        # Header Row
+        print(f'{'Title':60} {'Genre':15} {'Age Rating':15} {'Release Year':15} {'Director':25} {'Writer':25} {'Lead Actor':25} {'Country of Origin':25} {'Publishing Company':50} {'Run Time':10} {'IMDb Score':15} {'Amount of Votes':15}')
+        print('-' * 310)
+        
+        # Print Each Movie Row
+        if len(list) == 0:
+            print(f'{'There are no movie records to display.':^310}')
+        else:
+            for movie in list:
+                print(f'{movie.title:60} {movie.genre:15} {movie.age_rating:15} {movie.year:<15} {movie.director:25} {movie.writer:25} {movie.actor:25} {movie.country:25} {movie.company:50} {movie.run_time:<10} {movie.score:<15} {movie.votes:<15}')
+        
+        # Print Bottom Row
+        print('-' * 310, '\n')
         
 # If this file is launched as as script, print an error message alerting the user to open the correct file.
 if __name__ == '__main__':

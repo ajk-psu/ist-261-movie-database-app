@@ -75,8 +75,8 @@ if __name__ == '__main__':
     while close_program is False:
         
         menu_done = False # Set menu_done to False when entering the main menu to avoid making it impossible to enter the sub-menus.
-        console_interface.update_screen('Main Menu', 'Welcome to the Python Movie Database Manager! Please select an option below.')
-        user_selection = console_interface.prompt_options_menu('Add or Remove a Movie', 'Update a Movie', 'Search for Movies', 'Import Data from CSV', 'Export Data to CSV', 'Exit Application', 'DEV: DEBUGGING')
+        console_interface.update_screen('Main Menu', 'Welcome to the Python Movie Database Manager!\nFor the best viewing experience, please maximize this window. To get started, select an option below.')
+        user_selection = console_interface.prompt_options_menu('Add or Remove a Movie', 'Update a Movie', 'Search and Display Movies', 'Import Data from CSV', 'Export Data to CSV', 'Exit Application', 'DEV: DEBUGGING')
     
         # Add or Remove Movie Branch
         if user_selection == 1:
@@ -126,7 +126,7 @@ if __name__ == '__main__':
                 elif user_selection == 2:
                     task_done = False
                     confirm_remove = False
-                    """bool: Boolean used to confirm user's choice"""
+                    """bool: Boolean used to confirm user's choice about removal"""
                     search_results.clear() # Clear search_results to avoid polluting the next search results with results from an old search.
                     
                     console_interface.update_screen('Remove an Existing Movie', 'To remove a movie, please enter the title of the movie you woud like to remove. Please note that removing a movie cannot be undone!')
@@ -230,8 +230,59 @@ if __name__ == '__main__':
             
         # Search for Movies Branch
         elif user_selection == 3:
-            console_interface.update_screen('Search for a Movie', 'Sorry! This feature has not be implemented yet! You will be returned to the main menu.')
-            console_interface.prompt_enter_to_continue()
+            while menu_done is False:
+                movie_data.clear_search_list()
+                task_done = False
+                confirm_remove = False
+                
+                console_interface.update_screen('Search and Display Movie', 'From this menu you can choose to search for a movie by attribute and display the movies currently in the database.\n'
+                                                f'There are currently {len(movie_data.data_list)} record(s) in the database.\n\nPlease select an option below to continue.')
+                user_selection = console_interface.prompt_options_menu('Begin a Search', 'Display All Movies', 'Return to Main Menu')
+
+                # Movie Search Loop
+                if user_selection == 1:
+                    while task_done is False:
+                        console_interface.update_screen('Movie Search Menu', f'Welcome to the search menu, please select an operation below.\nCurrent search results: {len(movie_data.search_list)} records')
+                        user_selection = console_interface.prompt_options_menu('Search by Attribute', 'Display Current Search Results', 'Clear Current Search Results', 'Export Search Results to CSV File', 'Return to Previous Menu')
+                        
+                        # Search by Attribute
+                        # TODO: Implement this
+                        if user_selection == 1:
+                            pass
+                        # Display Current Search Results
+                        elif user_selection == 2:
+                            console_interface.update_screen('Movie Search Results', f'Amount of search results: {len(movie_data.search_list)} records')
+                            movie_data.print_table(movie_data.search_list)
+                            console_interface.prompt_enter_to_continue()
+                        # Clear Current Search Results
+                        elif user_selection == 3:
+                            console_interface.update_screen('Movie Search Menu - Warning!', f'You are about to clear your current search ({len(movie_data.search_list)} records)!')
+                            confirm_remove = console_interface.prompt_yes_or_no('Are you sure you wish to clear your current search results?')
+                            if confirm_remove is True:
+                                movie_data.clear_search_list()
+                                console_interface.update_screen('Movie Search Menu - Search Results Cleared', 'Your search results have been cleared.')
+                                console_interface.prompt_enter_to_continue()
+                            else:
+                                continue
+                        # Export Search Results to CSV File
+                        # TODO: Implement this
+                        elif user_selection == 4:
+                            console_interface.update_screen('Movie Search Results - Export Search Results to CSV File', 'This feature has not been implemented yet! Sorry!')
+                            console_interface.prompt_enter_to_continue()
+                        # Return to Previous Menu
+                        else:
+                            task_done = True
+                
+                # Display All Movies   
+                elif user_selection == 2:
+                    console_interface.update_screen('Display All Movie Records', 'Here are all the movies and their details currently loaded into the Pythom Movie Database Manager.\n\n'
+                                                    f'There are currently {len(movie_data.data_list)} record(s) in the database.')
+                    movie_data.print_table(movie_data.data_list)
+                    console_interface.prompt_enter_to_continue()
+                
+                # Return to Main Menu
+                else:
+                    menu_done = True
             
         # Import Data from CSV Branch
         elif user_selection == 4:
@@ -253,7 +304,7 @@ if __name__ == '__main__':
         elif user_selection == 7:
             console_interface.update_screen('Debug Testing', 'Dev option branch for testing. Please delete before submitting.\nPrinting contents of movie_list:')
             
-            movie_data.print_entire_table()
+            movie_data.print_table(movie_data.data_list)
                 
             console_interface.prompt_enter_to_continue()
             

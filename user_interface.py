@@ -17,7 +17,7 @@ class ConsoleUI:
         * Write more descriptive class description.
     """
     
-    UI_WIDTH = 200
+    UI_WIDTH = 310
     """int: Determines how wide (in characters) the console user interface is allowed to be."""
 
     HEADER_TEXT = 'Python Movie Database Manager'
