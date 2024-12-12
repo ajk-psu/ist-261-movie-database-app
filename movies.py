@@ -36,7 +36,7 @@ class MovieDatabase:
         Adds the specified Movie object to the data list at the end of the list.
 
         Args:
-            movie (str): _Description_: The Movie object to be addded.
+            movie (str): The Movie object to be addded.
         """
         self.data_list.append(movie)
     
@@ -46,7 +46,7 @@ class MovieDatabase:
         This should also delete the Movie object itself as it should have 0 references after operation.
 
         Args:
-            index (int): _Description_: The index of the Movie object to be removed from the data list.
+            index (int): The index of the Movie object to be removed from the data list.
         """
         del(self.data_list[index])
     
@@ -55,14 +55,13 @@ class MovieDatabase:
         Changes an existing Movie object's attribute.
 
         Args:
-            index (int): _Description_: The index where the Movie object is located in the data list.
-            attribute (str): _Description_: The attribute of the Movie object to change.
-            new_value (str, int, float): _Description_: The new value to change the attribute's value to.
+            index (int): The index where the Movie object is located in the data list.
+            attribute (str): The attribute of the Movie object to change.
+            new_value (str, int, float): The new value to change the attribute's value to.
         
         Raises:
             ValueError: _Description_: Inappropriate argument value (of correct type). May be raised when editing an attribute of integer or float type.
         """
-        
         # Use string attribute to determine which Movie object attribute to change.
         # For attributes that store either an integer or float, attempt to convert type first. If conversion fails, do not change attribute value.
         if attribute == 'Title':
@@ -130,9 +129,9 @@ class MovieDatabase:
         Searches the data list for Movies objects with the given attribute that matches the given search value.
 
         Args:
-            search_attribute (str): _Description_: The Movie object attribute to search for.
-            search_value (str, int, float): _Description_: The value to search for.
-            return_index (bool, optional): _Description_. When set to True, this method will instead return a list of indexes of where each matching Movie was found in the data_list. Defaults to False.
+            search_attribute (str): The Movie object attribute to search for.
+            search_value (str, int, float): The value to search for.
+            return_index (bool, optional): When set to True, this method will instead return a list of indexes of where each matching Movie was found in the data_list. Defaults to False.
 
         Returns:
             Returns a list of Movie objects that match the criteria. If return_index is set to True, returns a list of indexes of where each matching Movie object was found in the data_list.
@@ -152,7 +151,7 @@ class MovieDatabase:
         Prints all the attribute details for a specified Movie object instance.
 
         Args:
-            index (int): _Description_: The index of where the specified Movie object instance is located within data_list.
+            index (int): The index of where the specified Movie object instance is located within data_list.
         """
         print(f'Title: {self.data_list[index].title}\n'
               f'Genre: {self.data_list[index].genre}\n'
@@ -169,23 +168,32 @@ class MovieDatabase:
               )
     
     @staticmethod
-    def convert_description_to_attribute(description):
+    def convert_to_actual_attribute(descriptive_attribute):
+        """
+        Converts the given descriptive attribute to the actual attribute it refers to in code. For example, 'Publishing Company' becomes company.
+
+        Args:
+            descriptive_attribute (str): 
+        """
         pass
     
     @staticmethod
     def print_table(list):
-        # Header Row
+        """
+        Prints a formatted table with the given list of data.
+
+        Args:
+            list (list): The list to construct the formatted table from.
+        """
         print(f'{'Title':60} {'Genre':15} {'Age Rating':15} {'Release Year':15} {'Director':25} {'Writer':25} {'Lead Actor':25} {'Country of Origin':25} {'Publishing Company':50} {'Run Time':10} {'IMDb Score':15} {'Amount of Votes':15}')
         print('-' * 310)
         
-        # Print Each Movie Row
         if len(list) == 0:
             print(f'{'There are no movie records to display.':^310}')
         else:
             for movie in list:
                 print(f'{movie.title:60} {movie.genre:15} {movie.age_rating:15} {movie.year:<15} {movie.director:25} {movie.writer:25} {movie.actor:25} {movie.country:25} {movie.company:50} {movie.run_time:<10} {movie.score:<15} {movie.votes:<15}')
         
-        # Print Bottom Row
         print('-' * 310, '\n')
         
 # If this file is launched as as script, print an error message alerting the user to open the correct file.
