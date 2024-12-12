@@ -17,7 +17,7 @@ class ConsoleUI:
         * Write more descriptive class description.
     """
     
-    UI_WIDTH = 200
+    UI_WIDTH = 310
     """int: Determines how wide (in characters) the console user interface is allowed to be."""
 
     HEADER_TEXT = 'Python Movie Database Manager'
@@ -63,11 +63,11 @@ class ConsoleUI:
         """
         Changes title and body attributes to supplied strings (if supplied) and redraws the screen.
         
-        Note: If you need to change the body text only, call this function with object_name.update_screen(new_body='New string here').
+        Note: If you need to change the body text only, call this function with [object_name].update_screen(new_body='New string here').
         
         Args:
-            new_title (str, optional): _Description_: Text to change the object's title attribute to. Defaults to None (Null).
-            new_body (str, optional): _Description_: Text to change the object's body attribute to. Defaults to None (Null).
+            new_title (str, optional): Text to change the object's title attribute to. Defaults to None (Null).
+            new_body (str, optional): Text to change the object's body attribute to. Defaults to None (Null).
         """
         if new_title is not None:
             self.title = new_title
@@ -83,13 +83,13 @@ class ConsoleUI:
         Constructs an options menu from the arguments passed through to this function and prompts the user to select one of them.
         
         Args:
-            available_options (tuple): _Description_: Tuple containing options to print out to console.
+            available_options (tuple): Tuple containing options to print out to console.
             
         Raises:
-            ValueError: _Description_: Inappropriate argument value (of correct type).
+            ValueError: Inappropriate argument value (of correct type).
             
         Returns:
-            selected_option (int): _Description_: Integer containing the user's selected option
+            selected_option (int): Integer containing the user's selected option
         """
         selected_option = 0
         
@@ -123,7 +123,7 @@ class ConsoleUI:
         Constructs a yes-or-no prompt for the user to answer then collects the user's input.
 
         Args:
-            question (str): _Description_: Question to ask the user.
+            question (str): Question to ask the user.
 
         Returns:
             Returns True if the user answers "Yes", returns False if the user enters "No"
@@ -140,26 +140,27 @@ class ConsoleUI:
                 selected_option = input(f'{question} (Yes or No): ')
 
 
-    def prompt_ask_for_string(self, question, replace_blank = True):
+    def prompt_ask_for_string(self, question, allow_blank = True):
         """
         Prompts the user to respond to a given question and returns that response in a string.
 
         Args:
-            question (str): _Description_: Question to ask the user.
-            replace_blank (bool, optional) _Description_: When set to True, if the user enters nothing for a prompt, the methods returns the string 'Unknown'
+            question (str): Question to ask the user.
+            allow_blank (bool, optional): When set to True, this method will allow for blank (null) entries from the user. Blank responses will return 'Unknown.' Defaults to True.
 
         Returns:
             Returns user's response to the prompt in the form of a string.
         """
+        print(f'{question}:',end=' ')
         
-        user_response = input(f'{question}: ')
-        
-        if replace_blank is True and len(user_response) == 0:
-            return 'Unknown'
-        else:
-            return user_response
-        
-    
+        while True:
+            user_response = input().strip()
+            if not user_response and allow_blank:
+                return 'Unknown'
+            elif not user_response and not allow_blank:
+                print('You may not leave this field blank. Please try again:', end=' ')
+            else:
+                return user_response
     
     def prompt_ask_for_number(self, question, get_float = False, replace_blank = True):
         """
@@ -168,23 +169,21 @@ class ConsoleUI:
         Note: If you want to make sure the number the user enters is returned as a float, set get_float to True when calling this method.
 
         Args:
-            question (str): _Description_: Question to ask the user.
-            get_float (bool, optional): _Description_: When set to True, this method will attempt to return a float type instead of an integer. Defaults to False.
-            replace_blank (bool, optional): _Description_: When set to True, if the user enters nothing the method will return 0. Defaults to True.
+            question (str): Question to ask the user.
+            get_float (bool, optional): When set to True, this method will attempt to return a float type instead of an integer. Defaults to False.
+            replace_blank (bool, optional): When set to True, if the user enters nothing the method will return 0. Defaults to True.
             
         Raises:
-            ValueError: _Description_: Inappropriate argument value (of correct type).
+            ValueError: Inappropriate argument value (of correct type).
 
         Returns:
             Returns user's response to the prompt in the form of either an integer or float depending on if get_float was set to True or False.
         """
-
         print(f'{question}:', end = ' ')
-        
         while True:
-            user_response = input()
+            user_response = input().strip()
             
-            if replace_blank is True and len(user_response) == 0:
+            if replace_blank and not user_response:
                 if get_float:
                     return 0.0
                 else:
@@ -192,13 +191,13 @@ class ConsoleUI:
             else:
                 if get_float:
                     try:
-                        float(user_response)
+                        user_response = float(user_response)
                         return user_response
                     except:
                         print('That is not a valid number. Please enter a number:', end = ' ')
                 else:
                     try:
-                        int(user_response)
+                        user_response = int(user_response)
                         return user_response
                     except:
                         print('That is not a valid whole number. Please enter a whole number (no decimals):', end = ' ')
