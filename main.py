@@ -190,6 +190,7 @@ if __name__ == '__main__':
                 
                 if user_selection == 1:
                     console_interface.update_screen('Update a Movie', 'To begin editing, please enter the title of the movie you wish to edit.')
+                    
                     # Get title_string
                     title_string = get_title_string()
                 
@@ -200,11 +201,9 @@ if __name__ == '__main__':
                         console_interface.update_screen(f'{title_string} Not Found!', f'The movie {title_string} does not appear to exist in the database. Check your spelling and try again.')
                         console_interface.prompt_enter_to_continue()
                         continue
-                
                     elif len(search_results) == 1:  # Movie found
                         active_index = search_results[0]
                         movie_data.print_movie_details_list(active_index)
-
                     else:   # More than 1 result: User must select which movie they would like to update.
                         user_selection = select_a_result(search_results, movie_data)
                         active_index = search_results[user_selection]
@@ -215,6 +214,7 @@ if __name__ == '__main__':
                     
                         user_selection = console_interface.prompt_ask_for_string('Please enter the attribute you wish to change. If you are done, type \'Done\' instead', replace_blank=False)
 
+                        # Make sure the user entered a valid attribute or entered the sentinel value 'Done' or 'done'.
                         while user_selection not in movie_data.attribute_list and user_selection != 'Done' and user_selection != 'done':
                             user_selection = console_interface.prompt_ask_for_string('That is not a valid attribute. Please enter the movie detail you wish to edit as it exactly appears above. If you are done, type \'Done\' instead', replace_blank=False)
                         
@@ -223,6 +223,7 @@ if __name__ == '__main__':
                         else:
                             new_value = console_interface.prompt_ask_for_string(f'Please enter the new value for this movie\'s {user_selection}')
                             movie_data.update_movie_attribute(active_index, user_selection, new_value)
+                            
                             console_interface.prompt_enter_to_continue()
                 else:
                     menu_done = True

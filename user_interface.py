@@ -160,7 +160,6 @@ class ConsoleUI:
             return user_response
         
     
-    
     def prompt_ask_for_number(self, question, get_float = False, replace_blank = True):
         """
         Prompts the user to enter a number, returns the user's selected number as either a float or an integer.
@@ -178,9 +177,7 @@ class ConsoleUI:
         Returns:
             Returns user's response to the prompt in the form of either an integer or float depending on if get_float was set to True or False.
         """
-
         print(f'{question}:', end = ' ')
-        
         while True:
             user_response = input()
             
