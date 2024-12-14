@@ -1,20 +1,13 @@
-"""
-Creates, destroys, and prints user interface elements to the console.
-"""
-
 import os
 
 class ConsoleUI:
     """
-    Creates, destroys, and prints user interface objects to the console.
+    Creates, destroys, and prints user interface objects to the console. It also performs general user input validation.
  
     Attributes:
         header (str): Text that will be displayed in the user interface's Header section (this should not change during runtime).
         title (str): Text that will be displayed in the user interface's Title section.
         body (str): Text that will be displayed in the user interface's Body section.
-        
-    Todo:
-        * Write more descriptive class description.
     """
     
     UI_WIDTH = 310
@@ -109,7 +102,6 @@ class ConsoleUI:
                     return selected_option
                 
             except ValueError:
-                # TODO: selected_option always prints out 0 here for whatever reason. Fix this so it prints out the actual user's input.
                 print(f'\'{selected_option}\' is not a valid option. A valid option would be a number between 1 and {len(available_options)}, corresponding to the option you would like to choose.')
                 print(f'\nPlease enter your choice (1 - {len(available_options)}):', end = ' ')
                 
