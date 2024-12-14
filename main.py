@@ -2,6 +2,7 @@
 Program executes here.
 """
 import user_interface
+import operator
 import movies
 import os
 
@@ -24,7 +25,7 @@ def main():
         confirm_operation = False
         
         console_interface.update_screen('Main Menu', 'Welcome to the Python Movie Database Manager!\nFor the best viewing experience, please maximize this window. To get started, select an option below.')
-        user_selection = console_interface.prompt_options_menu('Add or Remove a Movie', 'Update a Movie', 'Search and Display Movies', 'Import Data from CSV', 'Export Data to CSV', 'Exit Application', 'DEV: DEBUGGING')
+        user_selection = console_interface.prompt_options_menu('Add or Remove a Movie', 'Update a Movie', 'Search and Display Movies', 'Import Data from CSV', 'Export Data to CSV', 'Exit Application')
         
         
         # Add or Remove Movie Branch
@@ -60,7 +61,6 @@ def main():
                     
                     if not search_results:
                         console_interface.update_screen(f'{title_string} not found!', f'{title_string} could not be found in the database. Check your spelling and try again.')
-                        console_interface.prompt_enter_to_continue()
                     else:
                         index = search_results[0]
                         # Confirm removal
@@ -71,10 +71,9 @@ def main():
                         if confirm_operation:
                             movie_database.remove_movie(index)
                             console_interface.update_screen(f'{movie_to_remove} Removed!', f'{movie_to_remove} has now been removed from the database.')
-                            console_interface.prompt_enter_to_continue()
                         else:
                             console_interface.update_screen(f'Canceled {movie_to_remove} Removal', f'The removal operation has been canceled. {movie_to_remove} will remain in the database.')
-                            console_interface.prompt_enter_to_continue()
+                    console_interface.prompt_enter_to_continue()
 
                 # Return to Main Menu Branch
                 else: 
@@ -131,7 +130,7 @@ def main():
                 
                 console_interface.update_screen('Search and Display Movies', 'From this menu you can choose to search for a movie by attribute and display the movies currently in the database.\n'
                                                 f'\nThere are currently {len(movie_database.data_list)} record(s) in the database.\n\nPlease select an option below to continue.')
-                user_selection = console_interface.prompt_options_menu('Begin a Search', 'Display All Movies', 'Return to Main Menu')
+                user_selection = console_interface.prompt_options_menu('Begin a Search', 'Display All Movies', 'Sort All Movies by Attribute', 'Return to Main Menu')
 
                 # Movie Search Menu Loop
                 if user_selection == 1:
@@ -169,9 +168,19 @@ def main():
                             console_interface.prompt_enter_to_continue()
                         
                         # Sort Search Results
-                        # TODO: Implement this
                         elif user_selection == 2:
-                            pass
+                            console_interface.update_screen('Sort by Attribute', f'The attributes you can sort by are listed below. Please type the attribute you wish to sort by exactly how it appears.')
+                            for attribute in movie_database.attribute_list:
+                                print(f'{attribute}', end=' '*15)
+
+                            attribute = console_interface.prompt_ask_for_string('\n\nPlease enter the attribue you wish to sort by here', allow_blank=False)
+                            while attribute not in movie_database.attribute_list:
+                                attribute = console_interface.prompt_ask_for_string('\nThat is not a valid attribute. Please enter the movie attribute as it exactly appears above', allow_blank=False)
+                            
+                            user_selection = console_interface.prompt_yes_or_no('Would you like the sort in descending order?')
+                            attribute_to_sort = movie_database.convert_to_actual_attribute(attribute)
+                            
+                            search_results.sort(key=operator.attrgetter(attribute_to_sort), reverse=user_selection)
                         
                         # Display Current Search Results
                         elif user_selection == 3:
@@ -189,11 +198,21 @@ def main():
                                 console_interface.prompt_enter_to_continue()
                             else:
                                 continue
+                            
                         # Export Search Results to CSV File
-                        # TODO: Implement this
                         elif user_selection == 5:
-                            console_interface.update_screen('Movie Search Results - Export Search Results to CSV File', 'This feature has not been implemented yet! Sorry!')
+                            if not search_results:
+                                console_interface.update_screen('Export Search Results to CSV - Error!', 'Your search results are currently empty. You will need to have at least one '
+                                                'entry in your search list to be able to export to a CSV file.')
+                            else:
+                                console_interface.update_screen('Export Search Results to CSV', 'From this menu, you can export your current search results to an external comma-seperated value (CSV) file '
+                                                                'for use with another program or to load into this program at a later time.')
+                
+                                file_path = console_interface.prompt_ask_for_string('Please enter the file location and file name of the CSV file to export to', allow_blank=False)
+                                movie_database.export_to_csv(file_path, search_results)
+                                console_interface.update_screen('Export Data to CSV - Export Success!', f'Movie data succesfully exported to {file_path}')
                             console_interface.prompt_enter_to_continue()
+                            
                         # Return to Previous Menu
                         else:
                             if len(search_results) > 0:
@@ -209,6 +228,21 @@ def main():
                                                     f'There are currently {len(movie_database.data_list)} record(s) in the database.')
                     movie_database.print_table(movie_database.data_list)
                     console_interface.prompt_enter_to_continue()
+                    
+                 # Sort All Movies By Attribute
+                elif user_selection == 3:
+                    console_interface.update_screen('Sort by Attribute', f'The attributes you can sort by are listed below. Please type the attribute you wish to sort by exactly how it appears.')
+                    for attribute in movie_database.attribute_list:
+                        print(f'{attribute}', end=' '*15)
+                        
+                    attribute = console_interface.prompt_ask_for_string('\n\nPlease enter the attribue you wish to sort by here', allow_blank=False)
+                    while attribute not in movie_database.attribute_list:
+                        attribute = console_interface.prompt_ask_for_string('That is not a valid attribute. Please enter the movie attribute as it exactly appears above', allow_blank=False)
+                            
+                    user_selection = console_interface.prompt_yes_or_no('Would you like the sort in descending order?')
+                    attribute_to_sort = movie_database.convert_to_actual_attribute(attribute)
+                            
+                    movie_database.data_list.sort(key=operator.attrgetter(attribute_to_sort), reverse=user_selection)
                 
                 # Return to Main Menu
                 else:
@@ -248,10 +282,10 @@ def main():
             if not movie_database.data_list:
                 console_interface.update_screen('Export Data to CSV - Error!', 'There are no records currently in the database to export. You will need to have at least one '
                                                 'entry in the database to be able to export to a CSV file.')
+                console_interface.prompt_enter_to_continue()
             else:
                 console_interface.update_screen('Export Data to CSV', 'From this menu, you can export the current database to to an external comma-seperated value (CSV) file '
                                                 'for use with another program or to load into this program at a later time.')
-                
                 file_path = console_interface.prompt_ask_for_string('Please enter the file location and file name of the CSV file to export to', allow_blank=False)
                 movie_database.export_to_csv(file_path, movie_database.data_list)
                 console_interface.update_screen('Export Data to CSV - Export Success!', f'Movie data succesfully exported to {file_path}')
@@ -261,15 +295,13 @@ def main():
             
         # Exit Application Branch
         elif user_selection == 6:
-            # TODO: Add a prompt asking the user if they would like to save their data to an external CSV file before quitting the application.
-            console_interface.update_screen('Exiting Application...', 'You are about to close the application.')
+            
+            if not movie_database.data_list:
+                console_interface.update_screen('Exiting Application...', 'You are about to close the application.')
+            else:
+                console_interface.update_screen('Exiting Application - Warning!', 'You are about to close the application, but you currently have entries in your movie database! If you want to access your database later, please save your data to a CSV file.')
             close_program = console_interface.prompt_yes_or_no('Are you sure you want to quit?')
-            
-            
-        # DEBUG BRANCH: REMOVE ONCE APPLICATION IS FINISHED
-        elif user_selection == 7:
-            console_interface.prompt_enter_to_continue()
-                    
+        
                     
         # User has somehow entered an invalid option.
         else:

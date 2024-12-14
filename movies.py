@@ -1,7 +1,13 @@
 import csv
 
 class Movie:
+    """
+    Represents a movie with basic attributes and related operations.
+    """
     def __init__(self, title, genre, age_rating, year, director, writer, actor, country, company, run_time, score, votes):
+        """
+        Initializes a Movie instance with given attributes.
+        """
         self.title = title
         self.genre = genre
         self.age_rating = age_rating
@@ -17,6 +23,17 @@ class Movie:
     
     @staticmethod
     def construct_new_movie(title_name, console_interface, movie_database):
+        """
+        Constructs a new movie by gathering input from the user.
+
+        Args:
+            title_name (str): Title of the new movie to create
+            console_interface (ConsoleUI): ConsoleUI object to manipulate the UI with.
+            movie_database (list): List to pull Movie object attributes from.
+
+        Returns:
+            Returns a list of Movie object attributes to construct a new object with.
+        """
         new_movie_entry = []
         task_done = False
         
@@ -48,10 +65,18 @@ class Movie:
 
 class MovieDatabase:
     """
-     _summary_
+    This class is responsible for holding Movie objects, and performing operations on them such as searching through their attributes, printing out their data, or sorting them.
+    
     """
     
     def __init__(self):
+        """
+        Initializes a MovieDatabase object with the given attributes.
+        
+        Args:
+            data_list (list): The primary list of data that will hold Movie objects
+            attribute_list (list): A list of Movie object attributes.
+        """
         self.data_list = []
         self.attribute_list = ['Title', 'Genre', 'Age Rating', 'Release Year', 
                                'Director', 'Writer', 'Lead Actor', 'Country of Origin', 'Publishing Company',
@@ -158,9 +183,7 @@ class MovieDatabase:
         else:
             print('Unknown attribute. No value will be changed.')
     
-    def sort_by_attribute(self, sort_attribute, ascending, external_list = None):
-        pass
-
+    
     def search_by_attribute(self, console_interface, search_attribute, search_value, external_list = None, return_index = False, return_multiple = True):
         """
         Searches the data list for Movies objects with the given attribute that matches the given search value.
@@ -320,6 +343,7 @@ class MovieDatabase:
             print(f"Successfully exported {len(movie_list)} movies to '{file_path}'.")
         except IOError as e:
             print(f"Error writing to file '{file_path}': {e}")
+            print('Press enter to continue.')
     
     @staticmethod
     def convert_to_actual_attribute(descriptive_attribute):
